@@ -1,4 +1,3 @@
-import sys
 from argparse import ArgumentParser, Action, Namespace
 from os.path import exists
 
@@ -79,6 +78,32 @@ class DuplicateContentsAction(Action):
             f.write(contents * dup_times)
 
 
+class ReplaceString(Action):
+    def __call__(
+        self,
+        parser: ArgumentParser,
+        namespace: Namespace,
+        values: list,
+        option_string: str,
+    ):
+        input_path, needle, new_string = values
+
+        if not exists(input_path):
+            print(f"Input file {input_path} does not exist")
+            return
+        contents = ""
+
+        with open(input_path) as f:
+            contents = f.read()
+
+        if contents.find(needle) == -1:
+            print(f"This file does not contain {needle}.")
+            return
+
+        with open(input_path, "w") as f:
+            f.write(contents.replace(needle, new_string))
+
+
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument(
@@ -112,6 +137,8 @@ if __name__ == "__main__":
         "--replace-string",
         type=str,
         nargs=3,
-        help="--replace-string [input file] [needle] [newstring]",
+        action=ReplaceString,
+        metavar=("[input file]", "[needle]", "[new string]"),
+        help="Replace string [needle] by [new string] in the input file.",
     )
     args = parser.parse_args()
