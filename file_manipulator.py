@@ -14,8 +14,7 @@ class ReverseAction(Action):
         # print(f"parse: {namespace} , type: {type(namespace)}")
         # print(f"parse: {values} , type: {type(values)}")
         # print(option_string)
-        input_path = values[0]
-        output_path = values[1]
+        input_path, output_path = values
         if not exists(input_path):
             print(f"Input file {input_path} does not exist")
             return
@@ -36,8 +35,8 @@ class CopyAction(Action):
         values: list,
         option_string: str,
     ):
-        input_path = values[0]
-        output_path = values[1]
+        input_path, output_path = values
+
         if not exists(input_path):
             print(f"Input file {input_path} does not exist")
             return
@@ -58,8 +57,8 @@ class DuplicateContentsAction(Action):
         values: list,
         option_string: str,
     ):
-        input_path = values[0]
-        dup_times = values[1]
+        input_path, dup_times = values
+
         if not exists(input_path):
             print(f"Input file {input_path} does not exist")
             return
