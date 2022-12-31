@@ -17,7 +17,6 @@ class ReverseAction(Action):
         # print(option_string)
         input_path = values[0]
         output_path = values[1]
-        print(input_path)
         if not exists(input_path):
             print(f"Input file {input_path} does not exist")
             return
@@ -30,6 +29,28 @@ class ReverseAction(Action):
             f.write(contents[::-1])
 
 
+class CopyAction(Action):
+    def __call__(
+        self,
+        parser: ArgumentParser,
+        namespace: Namespace,
+        values: list,
+        option_string: str,
+    ):
+        input_path = values[0]
+        output_path = values[1]
+        if not exists(input_path):
+            print(f"Input file {input_path} does not exist")
+            return
+        contents = ""
+
+        with open(input_path) as f:
+            contents = f.read()
+
+        with open(output_path, "x") as f:
+            f.write(contents)
+
+
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument(
@@ -38,11 +59,16 @@ if __name__ == "__main__":
         nargs=2,
         action=ReverseAction,
         metavar=("[input file]", "[output file]"),
-        help="reverse",
+        help="Output file that contains reversed texts in input file.",
     )
 
     parser.add_argument(
-        "--copy", type=str, nargs=2, help="--copy [input file] [output file]"
+        "--copy",
+        type=str,
+        nargs=2,
+        action=CopyAction,
+        metavar=("[input file]", "[output file]"),
+        help="Copy input file and name output file.",
     )
 
     parser.add_argument(
