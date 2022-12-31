@@ -51,6 +51,34 @@ class CopyAction(Action):
             f.write(contents)
 
 
+class DuplicateContentsAction(Action):
+    def __call__(
+        self,
+        parser: ArgumentParser,
+        namespace: Namespace,
+        values: list,
+        option_string: str,
+    ):
+        input_path = values[0]
+        dup_times = values[1]
+        if not exists(input_path):
+            print(f"Input file {input_path} does not exist")
+            return
+        contents = ""
+
+        try:
+            dup_times = int(dup_times)
+        except ValueError:
+            print("The second argument must be a number.")
+            return
+
+        with open(input_path) as f:
+            contents = f.read()
+
+        with open(input_path, "w") as f:
+            f.write(contents * dup_times)
+
+
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument(
@@ -75,7 +103,9 @@ if __name__ == "__main__":
         "--duplicate-contents",
         type=str,
         nargs=2,
-        help="--duplicate-contents [input file] [n]",
+        action=DuplicateContentsAction,
+        metavar=("[input file]", "[duplicate times]"),
+        help="Duplicate contents and write them duplicate times in the input file.",
     )
 
     parser.add_argument(
